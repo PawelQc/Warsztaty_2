@@ -1,6 +1,6 @@
 package pl.application.models;
 
-import util.BCrypt;
+import pl.application.util.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,11 +14,13 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private UserGroup userGroup;
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, UserGroup userGroup) {
         this.username = username;
         this.email = email;
         this.setPassword(password);
+        this.userGroup = userGroup;
     }
 
     public User() {
@@ -32,9 +34,10 @@ public class User {
         if (resultSet.next()) {
             User loadedUser = new User();
             loadedUser.id = resultSet.getInt("id");
-            loadedUser.username = resultSet.getString("username");
+            loadedUser.username = resultSet.getString("user_name");
             loadedUser.password = resultSet.getString("password");
             loadedUser.email = resultSet.getString("email");
+            loadedUser.userGroup = UserGroup.loadGroupById(conn, resultSet.getInt("user_group_id"));
             return loadedUser;
         }
         return null;
@@ -48,14 +51,23 @@ public class User {
         while (resultSet.next()) {
             User loadedUser = new User();
             loadedUser.id = resultSet.getInt("id");
-            loadedUser.username = resultSet.getString("username");
+            loadedUser.username = resultSet.getString("user_name");
             loadedUser.password = resultSet.getString("password");
             loadedUser.email = resultSet.getString("email");
+            loadedUser.userGroup = UserGroup.loadGroupById(conn, resultSet.getInt("user_group_id"));
             users.add(loadedUser);
         }
         User[] uArray = new User[users.size()];
         uArray = users.toArray(uArray);
         return uArray;
+    }
+
+    public UserGroup getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(UserGroup userGroup) {
+        this.userGroup = userGroup;
     }
 
     public int getId() {
@@ -88,27 +100,28 @@ public class User {
 
     public void saveToDB(Connection conn) throws SQLException {
         if (this.id == 0) {
-            String sql = "INSERT INTO users(username, email, password) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO users(username, email, password, user_group_id) VALUES (?, ?, ?, ?)";
             String[] generatedColumns = {"ID"};                                             //do konca nie wiem o co chodzi
             PreparedStatement preparedStatement = conn.prepareStatement(sql, generatedColumns);
             preparedStatement.setString(1, this.username);
             preparedStatement.setString(2, this.email);
             preparedStatement.setString(3, this.password);
+            preparedStatement.setInt(4, this.userGroup.getId());
             preparedStatement.executeUpdate();
             ResultSet rs = preparedStatement.getGeneratedKeys();
             if (rs.next()) {
                 this.id = rs.getInt(1);
             }
         } else {
-            String sql = "UPDATE users SET username=?, email=?, password=? where id = ?";
+            String sql = "UPDATE users SET username=?, email=?, password=?, user_group_id where id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, this.username);
             preparedStatement.setString(2, this.email);
             preparedStatement.setString(3, this.password);
-            preparedStatement.setInt(4, this.id);
+            preparedStatement.setInt(4, this.userGroup.getId());
+            preparedStatement.setInt(5, this.id);
             preparedStatement.executeUpdate();
         }
-
     }
 
     public void delete(Connection conn) throws SQLException {
@@ -119,5 +132,10 @@ public class User {
             preparedStatement.executeUpdate();
             this.id = 0;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "User " + id + ": " + username + ", " + email + " | ";
     }
 }
