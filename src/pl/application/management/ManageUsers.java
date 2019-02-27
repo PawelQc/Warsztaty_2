@@ -38,7 +38,7 @@ public class ManageUsers {
                 System.out.println("Użytkowanik został zapisany :)");
                 printUsers(conn);
             }
-            if ("edit".equals(command)) {
+            else if ("edit".equals(command)) {
                 System.out.println("Podaj id użytkownika, którego dane będą edytowane.");
                 int idUserEdit = scanner.nextInt();
                 scanner.nextLine();
@@ -56,7 +56,7 @@ public class ManageUsers {
                 System.out.println("Użytkowanik został zmodyfikowany :)");
                 printUsers(conn);
             }
-            if ("delete".equals(command)) {
+            else if ("delete".equals(command)) {
                 System.out.println("Podaj id użytkownika, którego dane będą usuwane.");
                 int idUserDelete = scanner.nextInt();
                 scanner.nextLine();
