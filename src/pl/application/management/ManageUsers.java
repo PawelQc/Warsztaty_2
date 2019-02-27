@@ -40,7 +40,7 @@ public class ManageUsers {
             }
             else if ("edit".equals(command)) {
                 System.out.println("Podaj id użytkownika, którego dane będą edytowane.");
-                int idUserEdit = scanner.nextInt();
+                int idUserEdit = getId(scanner);
                 scanner.nextLine();
                 User userEdit = User.loadUserById(conn, idUserEdit);
                 System.out.println("Podaj nowe imię użytkownika");
@@ -58,7 +58,7 @@ public class ManageUsers {
             }
             else if ("delete".equals(command)) {
                 System.out.println("Podaj id użytkownika, którego dane będą usuwane.");
-                int idUserDelete = scanner.nextInt();
+                int idUserDelete = getId(scanner);
                 scanner.nextLine();
                 User userDelete = User.loadUserById(conn, idUserDelete);
                 userDelete.delete(conn);
@@ -89,6 +89,14 @@ public class ManageUsers {
             int groupid = resultSet.getInt(5);
             System.out.println("User " + id + ", " + name + ", " + email + ", " + password + ", Grupa " + groupid);
         }
+    }
+
+    private static int getId(Scanner scanner) {
+        while (!scanner.hasNextInt()) {
+            System.out.println("Podaj wartość id jako liczbę całkowitą we wskazanym powyżej zakresie");
+            scanner.nextLine();
+        }
+        return scanner.nextInt();
     }
 
 }

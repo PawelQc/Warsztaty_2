@@ -1,8 +1,6 @@
 package pl.application.management;
 
 import pl.application.models.Exercise;
-import pl.application.models.User;
-import pl.application.models.UserGroup;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,7 +32,7 @@ public class ManageExercise {
             }
             else if ("edit".equals(command)) {
                 System.out.println("Podaj id zadania, którego dane będą edytowane.");
-                int idExEdit = scanner.nextInt();
+                int idExEdit = getId(scanner);
                 scanner.nextLine();
                 Exercise exEdit = Exercise.loadExerciseById(conn, idExEdit);
                 System.out.println("Podaj nowy tytuł zadania");
@@ -47,7 +45,7 @@ public class ManageExercise {
             }
             else if ("delete".equals(command)) {
                 System.out.println("Podaj id zadania, które chcesz usunąć.");
-                int idExDelete = scanner.nextInt();
+                int idExDelete = getId(scanner);
                 scanner.nextLine();
                 Exercise exDelete = Exercise.loadExerciseById(conn, idExDelete);
                 exDelete.deleteExercise(conn);
@@ -76,6 +74,14 @@ public class ManageExercise {
             String description = resultSet.getString(3);
             System.out.println(id + " | " + title + ", " + description);
         }
+    }
+
+    private static int getId(Scanner scanner) {
+        while (!scanner.hasNextInt()) {
+            System.out.println("Podaj wartość id jako liczbę całkowitą we wskazanym powyżej zakresie");
+            scanner.nextLine();
+        }
+        return scanner.nextInt();
     }
 
 }
