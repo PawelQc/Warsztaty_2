@@ -18,58 +18,6 @@ public class UserGroup {
     public UserGroup() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Grupa nr " + id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public void saveGroupToDB(Connection conn) throws SQLException {
-        if (this.id == 0) {
-            String sql = "INSERT INTO user_group(name) VALUES (?)";
-            String[] generatedColumns = {"ID"};                                             //do konca nie wiem o co chodzi
-            PreparedStatement preparedStatement = conn.prepareStatement(sql, generatedColumns);
-            preparedStatement.setString(1, this.name);
-            preparedStatement.executeUpdate();
-            ResultSet rs = preparedStatement.getGeneratedKeys();
-            if (rs.next()) {
-                this.id = rs.getInt(1);
-            }
-        } else {
-            String sql = "UPDATE user_group SET name=? where id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, this.name);
-            preparedStatement.setInt(2, this.id);
-            preparedStatement.executeUpdate();
-        }
-    }
-
-    public void deleteGroup(Connection conn) throws SQLException {
-        if (this.id != 0) {
-            String sql = "DELETE FROM user_group WHERE id=?";
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, this.id);
-            preparedStatement.executeUpdate();
-            this.id = 0;
-        }
-    }
-
     static public UserGroup loadGroupById(Connection conn, int id) throws SQLException {
         String sql = "SELECT * FROM user_group where id=?";
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -98,5 +46,56 @@ public class UserGroup {
         UserGroup[] gArray = new UserGroup[groups.size()];
         gArray = groups.toArray(gArray);
         return gArray;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Grupa nr " + id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void saveGroupToDB(Connection conn) throws SQLException {
+        if (this.id == 0) {
+            String sql = "INSERT INTO user_group(name) VALUES (?)";
+            String[] generatedColumns = {"ID"};
+            PreparedStatement preparedStatement = conn.prepareStatement(sql, generatedColumns);
+            preparedStatement.setString(1, this.name);
+            preparedStatement.executeUpdate();
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+            if (rs.next()) {
+                this.id = rs.getInt(1);
+            }
+        } else {
+            String sql = "UPDATE user_group SET name=? where id = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, this.name);
+            preparedStatement.setInt(2, this.id);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void deleteGroup(Connection conn) throws SQLException {
+        if (this.id != 0) {
+            String sql = "DELETE FROM user_group WHERE id=?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setInt(1, this.id);
+            preparedStatement.executeUpdate();
+            this.id = 0;
+        }
     }
 }

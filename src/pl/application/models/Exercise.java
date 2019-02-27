@@ -52,7 +52,7 @@ public class Exercise {
     public void saveExerciseToDB(Connection conn) throws SQLException {
         if (this.id == 0) {
             String sql = "INSERT INTO exercise(title, description) VALUES (?, ?)";
-            String[] generatedColumns = {"ID"};                                             //do konca nie wiem o co chodzi
+            String[] generatedColumns = {"ID"};
             PreparedStatement preparedStatement = conn.prepareStatement(sql, generatedColumns);
             preparedStatement.setString(1, this.title);
             preparedStatement.setString(2, this.description);

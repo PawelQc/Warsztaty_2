@@ -157,7 +157,7 @@ public class Solution {
     public void saveSolutionToDB(Connection conn) throws SQLException {
         if (this.id == 0) {
             String sql = "INSERT INTO solution(created, updated, description, exercise_id, users_id) VALUES (?, ?, ?, ?, ?)";
-            String[] generatedColumns = {"ID"};                                             //do konca nie wiem o co chodzi
+            String[] generatedColumns = {"ID"};
             PreparedStatement preparedStatement = conn.prepareStatement(sql, generatedColumns);
             preparedStatement.setDate(1, this.created);
             preparedStatement.setDate(2, this.updated);

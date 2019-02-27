@@ -62,6 +62,26 @@ public class User {
         return uArray;
     }
 
+    static public User[] loadAllUsersfromSpecificGroup(Connection conn, int id) throws SQLException {
+        ArrayList<User> users = new ArrayList<User>();
+        String sql = "select * from users where user_group_id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setInt(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            User loadedUser = new User();
+            loadedUser.id = resultSet.getInt("id");
+            loadedUser.username = resultSet.getString("user_name");
+            loadedUser.password = resultSet.getString("password");
+            loadedUser.email = resultSet.getString("email");
+            loadedUser.userGroup = UserGroup.loadGroupById(conn, resultSet.getInt("user_group_id"));
+            users.add(loadedUser);
+        }
+        User[] uArray = new User[users.size()];
+        uArray = users.toArray(uArray);
+        return uArray;
+    }
+
     public UserGroup getUserGroup() {
         return userGroup;
     }
@@ -100,8 +120,8 @@ public class User {
 
     public void saveToDB(Connection conn) throws SQLException {
         if (this.id == 0) {
-            String sql = "INSERT INTO users(username, email, password, user_group_id) VALUES (?, ?, ?, ?)";
-            String[] generatedColumns = {"ID"};                                             //do konca nie wiem o co chodzi
+            String sql = "INSERT INTO users(user_name, email, password, user_group_id) VALUES (?, ?, ?, ?)";
+            String[] generatedColumns = {"ID"};
             PreparedStatement preparedStatement = conn.prepareStatement(sql, generatedColumns);
             preparedStatement.setString(1, this.username);
             preparedStatement.setString(2, this.email);
@@ -113,7 +133,7 @@ public class User {
                 this.id = rs.getInt(1);
             }
         } else {
-            String sql = "UPDATE users SET username=?, email=?, password=?, user_group_id where id = ?";
+            String sql = "UPDATE users SET user_name=?, email=?, password=?, user_group_id=? where id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, this.username);
             preparedStatement.setString(2, this.email);
@@ -136,36 +156,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User " + id + ": " + username + ", " + email + " | ";
+        return "User " + id + ": " + username + ", " + email + ", " + password + ", " + userGroup + " | ";
     }
-
-
-    static public User[] loadAllUsersfromSpecificGroup(Connection conn, int id) throws SQLException {
-        ArrayList<User> users = new ArrayList<User>();
-        String sql = "select * from users where user_group_id = ?";
-        PreparedStatement preparedStatement = conn.prepareStatement(sql);
-        preparedStatement.setInt(1, id);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            User loadedUser = new User();
-            loadedUser.id = resultSet.getInt("id");
-            loadedUser.username = resultSet.getString("user_name");
-            loadedUser.password = resultSet.getString("password");
-            loadedUser.email = resultSet.getString("email");
-            loadedUser.userGroup = UserGroup.loadGroupById(conn, resultSet.getInt("user_group_id"));
-            users.add(loadedUser);
-        }
-        User[] uArray = new User[users.size()];
-        uArray = users.toArray(uArray);
-        return uArray;
-    }
-
-
-
 }
-
-
-
-
-//    pobranie wszystkich członków danej grupy (dopisz metodę loadAllByGroupId do klasy User).
-//select * from users where user_group_id = 2;
