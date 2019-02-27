@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class Solution {
 
     private int id;
-    private Date created;
-    private Date updated;
+    private Timestamp created;
+    private Timestamp updated;
     private String description;
     private Exercise exercise;
     private User user;
@@ -15,10 +15,11 @@ public class Solution {
     public Solution() {
     }
 
-    public Solution(String description, Exercise exercise, User user) {
+    public Solution(String description, Exercise exercise, User user, Timestamp created) {
         this.description = description;
         this.exercise = exercise;
         this.user = user;
+        this.created = created;
     }
 
     static public Solution loadSolutionById(Connection conn, int id) throws SQLException {
@@ -29,8 +30,8 @@ public class Solution {
         if (resultSet.next()) {
             Solution loadedSolution = new Solution();
             loadedSolution.id = resultSet.getInt("id");
-            loadedSolution.created = resultSet.getDate("created");
-            loadedSolution.updated = resultSet.getDate("updated");
+            loadedSolution.created = resultSet.getTimestamp("created");
+            loadedSolution.updated = resultSet.getTimestamp("updated");
             loadedSolution.description = resultSet.getString("description");
             loadedSolution.exercise = Exercise.loadExerciseById(conn, resultSet.getInt("exercise_id"));
             loadedSolution.user = User.loadUserById(conn, resultSet.getInt("users_id"));
@@ -47,8 +48,8 @@ public class Solution {
         while (resultSet.next()) {
             Solution loadedSolution = new Solution();
             loadedSolution.id = resultSet.getInt("id");
-            loadedSolution.created = resultSet.getDate("created");
-            loadedSolution.updated = resultSet.getDate("updated");
+            loadedSolution.created = resultSet.getTimestamp("created");
+            loadedSolution.updated = resultSet.getTimestamp("updated");
             loadedSolution.description = resultSet.getString("description");
             loadedSolution.exercise = Exercise.loadExerciseById(conn, resultSet.getInt("exercise_id"));
             loadedSolution.user = User.loadUserById(conn, resultSet.getInt("users_id"));
@@ -68,8 +69,8 @@ public class Solution {
         while (resultSet.next()) {
             Solution loadedSolution = new Solution();
             loadedSolution.id = resultSet.getInt("id");
-            loadedSolution.created = resultSet.getDate("created");
-            loadedSolution.updated = resultSet.getDate("updated");
+            loadedSolution.created = resultSet.getTimestamp("created");
+            loadedSolution.updated = resultSet.getTimestamp("updated");
             loadedSolution.description = resultSet.getString("description");
             loadedSolution.exercise = Exercise.loadExerciseById(conn, resultSet.getInt("exercise_id"));
             loadedSolution.user = User.loadUserById(conn, resultSet.getInt("users_id"));
@@ -89,8 +90,8 @@ public class Solution {
         while (resultSet.next()) {
             Solution loadedSolution = new Solution();
             loadedSolution.id = resultSet.getInt("id");
-            loadedSolution.created = resultSet.getDate("created");
-            loadedSolution.updated = resultSet.getDate("updated");
+            loadedSolution.created = resultSet.getTimestamp("created");
+            loadedSolution.updated = resultSet.getTimestamp("updated");
             loadedSolution.description = resultSet.getString("description");
             loadedSolution.exercise = Exercise.loadExerciseById(conn, resultSet.getInt("exercise_id"));
             loadedSolution.user = User.loadUserById(conn, resultSet.getInt("users_id"));
@@ -101,9 +102,25 @@ public class Solution {
         return sArray;
     }
 
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    public void setCreated(Timestamp created) {
+        this.created = created;
+    }
+
+    public Timestamp getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Timestamp updated) {
+        this.updated = updated;
+    }
+
     @Override
     public String toString() {
-        return "Solution " + id + ", " + description + " | ";
+        return "Solution " + id + ", " + description + ", utworzono: " + created + " | ";
     }
 
     public int getId() {
@@ -114,21 +131,6 @@ public class Solution {
         this.id = id;
     }
 
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
 
     public String getDescription() {
         return description;
@@ -159,8 +161,8 @@ public class Solution {
             String sql = "INSERT INTO solution(created, updated, description, exercise_id, users_id) VALUES (?, ?, ?, ?, ?)";
             String[] generatedColumns = {"ID"};
             PreparedStatement preparedStatement = conn.prepareStatement(sql, generatedColumns);
-            preparedStatement.setDate(1, this.created);
-            preparedStatement.setDate(2, this.updated);
+            preparedStatement.setTimestamp(1, this.created);
+            preparedStatement.setTimestamp(2, this.updated);
             preparedStatement.setString(3, this.description);
             preparedStatement.setInt(4, this.exercise.getId());
             preparedStatement.setInt(5, this.user.getId());
@@ -172,8 +174,8 @@ public class Solution {
         } else {
             String sql = "UPDATE solution SET created=?, updated=?, description=?, exercise_id=?, users_id=? where id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setDate(1, this.created);
-            preparedStatement.setDate(2, this.updated);
+            preparedStatement.setTimestamp(1, this.created);
+            preparedStatement.setTimestamp(2, this.updated);
             preparedStatement.setString(3, this.description);
             preparedStatement.setInt(4, this.exercise.getId());
             preparedStatement.setInt(5, this.user.getId());

@@ -11,9 +11,6 @@ import java.util.Scanner;
 
 public class ManageUsers {
 
-    public ManageUsers() {
-    }
-
     public static void ManageUsers(Connection conn) throws SQLException {
         printUsers(conn);
         System.out.println();
@@ -37,8 +34,7 @@ public class ManageUsers {
                 userAdd.saveToDB(conn);
                 System.out.println("Użytkowanik został zapisany :)");
                 printUsers(conn);
-            }
-            else if ("edit".equals(command)) {
+            } else if ("edit".equals(command)) {
                 System.out.println("Podaj id użytkownika, którego dane będą edytowane.");
                 int idUserEdit = getId(scanner);
                 scanner.nextLine();
@@ -55,8 +51,7 @@ public class ManageUsers {
                 userEdit.saveToDB(conn);
                 System.out.println("Użytkowanik został zmodyfikowany :)");
                 printUsers(conn);
-            }
-            else if ("delete".equals(command)) {
+            } else if ("delete".equals(command)) {
                 System.out.println("Podaj id użytkownika, którego dane będą usuwane.");
                 int idUserDelete = getId(scanner);
                 scanner.nextLine();
