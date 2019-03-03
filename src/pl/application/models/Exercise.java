@@ -49,6 +49,40 @@ public class Exercise {
         return title + ", " + description + " | ";
     }
 
+    private static Exercise getExercise(ResultSet resultSet) throws SQLException {
+        Exercise loadedExercise = new Exercise();
+        loadedExercise.id = resultSet.getInt("id");
+        loadedExercise.title = resultSet.getString("title");
+        loadedExercise.description = resultSet.getString("description");
+        return loadedExercise;
+    }
+
+    static public Exercise loadExerciseById(Connection conn, int id) throws SQLException {
+        String sql = "SELECT * FROM exercise where id=?";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setInt(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            Exercise loadedExercise = getExercise(resultSet);
+            return loadedExercise;
+        }
+        return null;
+    }
+
+    static public Exercise[] loadAllExercises(Connection conn) throws SQLException {
+        ArrayList<Exercise> exercises = new ArrayList<Exercise>();
+        String sql = "SELECT * FROM exercise";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            Exercise loadedExercise = getExercise(resultSet);
+            exercises.add(loadedExercise);
+        }
+        Exercise[] eArray = new Exercise[exercises.size()];
+        eArray = exercises.toArray(eArray);
+        return eArray;
+    }
+
     public void saveExerciseToDB(Connection conn) throws SQLException {
         if (this.id == 0) {
             String sql = "INSERT INTO exercise(title, description) VALUES (?, ?)";
@@ -79,37 +113,5 @@ public class Exercise {
             preparedStatement.executeUpdate();
             this.id = 0;
         }
-    }
-
-    static public Exercise loadExerciseById(Connection conn, int id) throws SQLException {
-        String sql = "SELECT * FROM exercise where id=?";
-        PreparedStatement preparedStatement = conn.prepareStatement(sql);
-        preparedStatement.setInt(1, id);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            Exercise loadedExercise = new Exercise();
-            loadedExercise.id = resultSet.getInt("id");
-            loadedExercise.title = resultSet.getString("title");
-            loadedExercise.description = resultSet.getString("description");
-            return loadedExercise;
-        }
-        return null;
-    }
-
-    static public Exercise[] loadAllExercises(Connection conn) throws SQLException {
-        ArrayList<Exercise> exercises = new ArrayList<Exercise>();
-        String sql = "SELECT * FROM exercise";
-        PreparedStatement preparedStatement = conn.prepareStatement(sql);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            Exercise loadedExercise = new Exercise();
-            loadedExercise.id = resultSet.getInt("id");
-            loadedExercise.title = resultSet.getString("title");
-            loadedExercise.description = resultSet.getString("description");
-            exercises.add(loadedExercise);
-        }
-        Exercise[] eArray = new Exercise[exercises.size()];
-        eArray = exercises.toArray(eArray);
-        return eArray;
     }
 }
